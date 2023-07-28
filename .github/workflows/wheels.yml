@@ -31,13 +31,24 @@ jobs:
 
 
   build_wheels:
-    name: Wheels on ${{ matrix.os }}
+    name: Wheels on ${{ matrix.os }}${{ matrix.extra }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-
+        arch_linux:  ["auto"]
+        extra: [""]
+        include:
+          - os: ubuntu-latest
+            arch_linux: "aarch64"
+            extra: "- aarch64"
+          - os: ubuntu-latest
+            arch_linux: "ppc64le"
+            extra: "- ppc64le"
+          - os: ubuntu-latest
+            arch_linux: "s390x"
+            extra: "- s390x"
     steps:
     - uses: actions/checkout@v3
 
@@ -50,7 +61,7 @@ jobs:
     - uses: pypa/cibuildwheel@v2.14.1
       env:
         CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
-        CIBW_ARCHS_LINUX: "auto aarch64 ppc64le"
+        CIBW_ARCHS_LINUX: ${{ matrix.arch_linux }}
         CIBW_PRERELEASE_PYTHONS: true
 
     - name: Verify clean directory

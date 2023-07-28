@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <algorithm>
 
 extern "C" {
 #include "au/au_header.c"
@@ -17,6 +18,14 @@ extern "C" {
 
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
+
+#if defined(__linux__)
+#include <endian.h>
+#else
+// all others assumed to be little-endian
+#define htole16(x) (x)
+#define le16toh(x) (x)
+#endif
 
 namespace py = pybind11;
 
@@ -38,6 +47,9 @@ py::bytes encode(py::bytes bytes_in, size_t input_frame_size=320, size_t output_
         size_t e = std::min(std::size(data_in), i + 2*input_frame_size);
         std::fill(std::copy(reinterpret_cast<Word16*>(&data_in[i]), reinterpret_cast<Word16*>(&data_in[e]), input), std::end(input), 0);
 
+        for(size_t i=0; i < MAX_FRAMESIZE; i++)
+            input[i] = le16toh(input[i]);
+
         auto mag_shift = samples_to_rmlt_coefs(input, history, mlt_coefs, input_frame_size);
 
         /* Encode the mlt coefs */
@@ -46,6 +58,9 @@ py::bytes encode(py::bytes bytes_in, size_t input_frame_size=320, size_t output_
                 mlt_coefs,
                 mag_shift,
                 out_words);
+
+        for(size_t i=0; i < MAX_BITS_PER_FRAME / 16; i++)
+            out_words[i] = htole16(out_words[i]);
 
         result.append(reinterpret_cast<char*>(&out_words[0]), output_frame_size);
     }
