@@ -17,7 +17,7 @@ jobs:
     name: Build SDist
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Build SDist
       run: pipx run build --sdist
@@ -50,7 +50,7 @@ jobs:
             arch_linux: "s390x"
             extra: "- s390x"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up QEMU
       if: runner.os == 'Linux'
