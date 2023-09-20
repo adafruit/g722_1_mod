@@ -51,10 +51,10 @@ jobs:
 
     - uses: actions/checkout@v3
 
-    - name: Install pybind11
+    - name: Install requirements
       # This is required because --no-build-isolation disable dependences
       # installation
-      run: pip install pybind11
+      run: pip install pybind11 setuptools_scm
 
     - name: Build and install
       # --no-build-isolation is required because the vanilla setuptool does not
