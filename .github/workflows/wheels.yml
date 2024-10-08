@@ -64,7 +64,7 @@ jobs:
         CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
         CIBW_ARCHS_LINUX: ${{ matrix.arch_linux }}
         CIBW_PRERELEASE_PYTHONS: true
-        CIBW_SKIP: pp*
+        CIBW_SKIP: "pp* cp38-macosx_x86_64"
 
     - name: Verify clean directory
       run: git diff --exit-code
