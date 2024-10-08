@@ -43,12 +43,13 @@ jobs:
           - os: ubuntu-latest
             arch_linux: "aarch64"
             extra: "- aarch64"
+            artifact-extra: "-aarch64"
           - os: ubuntu-latest
             arch_linux: "ppc64le"
-            extra: "- ppc64le"
+            artifact-extra: "-ppc64le"
           - os: ubuntu-latest
             arch_linux: "s390x"
-            extra: "- s390x"
+            artifact-extra: "-s390x"
     steps:
     - uses: actions/checkout@v4
 
@@ -72,6 +73,7 @@ jobs:
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
+        name: wheel-${{ matrix.os }}${{ matrix.artifact-extra }}
         path: wheelhouse/*.whl
 
 
