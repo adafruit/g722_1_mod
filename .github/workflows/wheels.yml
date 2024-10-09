@@ -27,7 +27,10 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
+        name: sdist
         path: dist/*.tar.gz
+        compression-level: 0
+        if-no-files-found: error
 
 
   build_wheels:
@@ -42,13 +45,15 @@ jobs:
         include:
           - os: ubuntu-latest
             arch_linux: "aarch64"
-            extra: "- aarch64"
+            extra: " - aarch64"
             artifact-extra: "-aarch64"
           - os: ubuntu-latest
             arch_linux: "ppc64le"
+            extra: " - ppc64le"
             artifact-extra: "-ppc64le"
           - os: ubuntu-latest
             arch_linux: "s390x"
+            extra: " - s390x"
             artifact-extra: "-s390x"
     steps:
     - uses: actions/checkout@v4
@@ -75,10 +80,12 @@ jobs:
       with:
         name: wheel-${{ matrix.os }}${{ matrix.artifact-extra }}
         path: wheelhouse/*.whl
+        compression-level: 0
+        if-no-files-found: error
 
 
   upload_all:
-    name: Upload if release
+    name: Upload release
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
@@ -90,8 +97,8 @@ jobs:
 
     - uses: actions/download-artifact@v4
       with:
-        name: artifact
         path: dist
+        merge-multiple: true
 
     - uses: pypa/gh-action-pypi-publish@release/v1
       with:
