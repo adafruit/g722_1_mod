@@ -45,13 +45,15 @@ jobs:
         include:
           - os: ubuntu-latest
             arch_linux: "aarch64"
-            extra: "- aarch64"
+            extra: " - aarch64"
             artifact-extra: "-aarch64"
           - os: ubuntu-latest
             arch_linux: "ppc64le"
+            extra: " - ppc64le"
             artifact-extra: "-ppc64le"
           - os: ubuntu-latest
             arch_linux: "s390x"
+            extra: " - s390x"
             artifact-extra: "-s390x"
     steps:
     - uses: actions/checkout@v4
@@ -96,6 +98,7 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         path: dist
+        merge-multiple: true
 
     - uses: pypa/gh-action-pypi-publish@release/v1
       with:
